@@ -1,0 +1,28 @@
+site_name: AdGuard Home for Mere Mortals
+site_description: A DNS server for your own network that answers the questions and quietly refuses the ads and trackers. Installing AdGuard Home, completing its setup wizard, choosing upstreams, adding blocklists and your own rules, reading the query log, and knowing its limits, with the privacy line stated plainly.
+site_url: https://paulsullivan33-dev.github.io/adguard-home-for-mere-mortals/
+copyright: 'Part of <a href="https://paulsullivan33-dev.github.io/mere-mortals/">For Mere Mortals</a> · Text <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, code MIT'
+
+# Guides live at the repo root (nice for GitHub browsing).
+# The deploy workflow copies them into docs/ before building.
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - What AdGuard Home Is: what-adguard-home-is.md
+  - The Moving Parts: the-moving-parts.md
+  - Installing AdGuard Home: installing-adguard-home.md
+  - The Setup Wizard: the-setup-wizard.md
+  - Your First Lookups: your-first-lookups.md
+  - Upstreams — Who Answers Next: upstreams.md
+  - Blocking — Lists and Your Own Rules: blocking.md
+  - Local Names and Rewrites: rewrites.md
+  - The Query Log and Statistics: query-log-and-statistics.md
+  - Clients and Per-Device Rules: clients.md
+  - Recipes: recipes.md
+  - The Neighbours: the-neighbours.md
+  - Limits: limits.md
+  - Troubleshooting: troubleshooting.md
+  - Glossary: glossary.md
+  - Writing Criteria: criteria.md

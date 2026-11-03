@@ -1,0 +1,20 @@
+$ dig +tcp @127.0.0.1 example.com A +noall +answer +stats
+example.com.		15	IN	A	198.18.131.110
+;; Query time: 40 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:05 UTC 2026
+;; MSG SIZE  rcvd: 56
+
+$ dig +tcp @127.0.0.1 example.com A +noall +answer +stats  (again)
+example.com.		15	IN	A	198.18.131.110
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:05 UTC 2026
+;; MSG SIZE  rcvd: 56
+
+$ dig +tcp @127.0.0.1 example.org AAAA +noall +answer +stats
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:05 UTC 2026
+;; MSG SIZE  rcvd: 40
+

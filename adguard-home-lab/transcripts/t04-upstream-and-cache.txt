@@ -1,0 +1,24 @@
+NOTE: the sandbox gateway resolver is 198.19.0.1 (from /etc/resolv.conf).
+$ timeout 6 dig @198.19.0.1 example.com A +noall +answer +stats
+example.com.		15	IN	A	198.18.131.110
+;; Query time: 5 msec
+;; SERVER: 198.19.0.1#53(198.19.0.1) (UDP)
+;; WHEN: Tue Nov 03 00:58:08 UTC 2026
+;; MSG SIZE  rcvd: 45
+
+$ GET /control/dns_info  (upstream before)
+upstream_dns: ['https://dns10.quad9.net/dns-query']  bootstrap_dns: ['9.9.9.10', '149.112.112.10'] ...
+upstream_mode:   cache_enabled: True
+$ POST /control/dns_config  upstream_dns := ["198.19.0.1"]  (the lab gateway resolver; see transcript note)
+HTTP 200 OK
+$ GET /control/dns_info  (upstream after)
+upstream_dns: ['198.19.0.1']
+$ dig @127.0.0.1 example.com A +noall +answer +stats
+;; communications error to 127.0.0.1#53: timed out
+;; communications error to 127.0.0.1#53: timed out
+$ dig @127.0.0.1 example.com A +noall +answer +stats   (again: AdGuard cache)
+;; communications error to 127.0.0.1#53: timed out
+;; communications error to 127.0.0.1#53: timed out
+$ dig @127.0.0.1 example.org AAAA +noall +answer +stats
+;; communications error to 127.0.0.1#53: timed out
+;; communications error to 127.0.0.1#53: timed out

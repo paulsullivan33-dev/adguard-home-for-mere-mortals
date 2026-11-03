@@ -1,0 +1,22 @@
+$ AdGuardHome -w $LAB --web-addr 127.0.0.1:18080 --no-check-update   (fresh, empty work dir)
+$ curl -s -i http://127.0.0.1:18080/
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=utf-8
+Location: /install.html
+Date: Tue, 03 Nov 2026 00:56:42 GMT
+Content-Length: 36
+
+<a href="/install.html">Found</a>.
+
+
+$ curl -s http://127.0.0.1:18080/control/install/get_addresses
+{"interfaces":{"host0":{"hardware_address":"72:dc:7c:34:2f:fd","flags":"up|broadcast|multicast|running","ip_addresses":["198.19.0.2","fd8b:4f84:7d32:99::2","fe80::70dc:7cff:fe34:2ffd%host0"],"name":"host0","mtu":1500},"lo":{"hardware_address":"","flags":"up|loopback|running","ip_addresses":["127.0.0.1","::1"],"name":"lo","mtu":65536}},"version":"v0.107.79","web_port":80,"dns_port":53}
+
+$ curl -s -X POST -d <install choices> /control/install/check_config
+{"static_ip":{"static":"error","ip":"","error":"no information about static ip"},"dns":{"status":"","can_autofix":false},"language":{"status":"","can_autofix":false},"web":{"status":"","can_autofix":false}}
+
+$ grep -E "first time|can bind|redirecting|serving" server.log
+2026/11/03 00:56:40.718532 [info] this is the first time adguard home has been launched
+2026/11/03 00:56:40.720246 [info] adguard home can bind to port 53
+2026/11/03 00:56:40.754631 [info] webapi: This is the first launch of AdGuard Home, redirecting everything to /install.html
+2026/11/03 00:56:40.754828 [info] webapi: serving url=http://127.0.0.1:18080

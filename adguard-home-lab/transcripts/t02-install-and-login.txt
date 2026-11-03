@@ -1,0 +1,30 @@
+$ curl -s -X POST -d <install choices> /control/install/configure
+OK
+
+HTTP 200
+$ curl -s http://127.0.0.1:18080/control/status   (no login cookie yet)
+
+HTTP 401
+$ curl -s -c cookies.txt -X POST -d {"name":"admin","password":"lab-password-123"} /control/login
+OK
+
+HTTP 200
+$ curl -s -b cookies.txt http://127.0.0.1:18080/control/status
+{"version":"v0.107.79","language":"","dns_addresses":["127.0.0.1"],"dns_port":53,"http_port":18080,"protection_disabled_duration":0,"start_time":1793667400754.5994,"protection_enabled":true,"dhcp_available":true,"running":true}
+
+$ find lab work dir -type f
+/home/hatch/workspace/adguard-home-labwork/lab/AdGuardHome.yaml
+/home/hatch/workspace/adguard-home-labwork/lab/agh.pid
+/home/hatch/workspace/adguard-home-labwork/lab/cookies.txt
+/home/hatch/workspace/adguard-home-labwork/lab/data/sessions.db
+/home/hatch/workspace/adguard-home-labwork/lab/data/stats.db
+/home/hatch/workspace/adguard-home-labwork/lab/server.log
+$ AdGuardHome -c lab/AdGuardHome.yaml --check-config
+2026/11/03 00:56:45.300101 [info] starting adguard home version="AdGuard Home, version v0.107.79"
+2026/11/03 00:56:45.302374 [info] configuration file is ok
+exit:0
+$ grep key lines of AdGuardHome.yaml (password hash deliberately not shown)
+  address: 127.0.0.1:18080
+  port: 53
+    - https://dns10.quad9.net/dns-query
+    name: AdGuard DNS filter

@@ -1,0 +1,25 @@
+$ GET /control/querylog?limit=6  (newest first, trimmed to the fields the guide uses)
+01:00:06  files.example A  -> 198.18.131.114  reason=NotFilteredNotFound  upstream=198.19.0.1:53  client=127.0.0.1 (localhost)  28.2 ms
+01:00:06  nas.example A  -> 192.0.2.60  reason=Rewrite  client=127.0.0.1 (localhost)  0.1 ms
+01:00:06  files.example A  -> 192.0.2.50  reason=Rewrite  client=127.0.0.1 (localhost)  0.1 ms
+00:59:54  example.com A  -> 198.18.131.110  reason=NotFilteredNotFound  upstream=198.19.0.1:53  client=127.0.0.1 (localhost)  3.8 ms
+00:59:54  www.ads.example.com A  -> 0.0.0.0  reason=FilteredBlackList  rule=||ads.example.com^  client=127.0.0.1 (localhost)  0.1 ms
+00:59:54  ads.example.com A  -> 0.0.0.0  reason=FilteredBlackList  rule=||ads.example.com^  client=127.0.0.1 (localhost)  0.5 ms
+
+$ GET /control/stats
+num_dns_queries: 23
+num_blocked_filtering: 4
+num_replaced_safebrowsing: 0
+num_replaced_parental: 0
+num_replaced_safesearch: 0
+avg_processing_time: 0.007
+top_queried_domains: [{'example.com': 10}, {'example.org': 4}, {'files.example': 2}, {'ads.example.com': 1}, {'www.ads.example.com': 1}, {'nas.example': 1}]
+top_blocked_domains: [{'ads.example.com': 2}, {'taboola-display.com': 1}, {'www.ads.example.com': 1}]
+
+$ GET /control/clients  (who AdGuard Home has seen asking questions)
+auto client: 198.19.0.1 name: hatch-egress-proxy source: etc/hosts
+auto client: 127.0.0.1 name: localhost source: etc/hosts
+auto client: ::1 name: localhost source: etc/hosts
+auto client: 127.0.1.1 name: htch-runtime source: etc/hosts
+auto client: fd8b:4f84:7d32:99::1 name: hatch-egress-proxy source: etc/hosts
+persistent clients: None

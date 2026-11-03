@@ -1,0 +1,54 @@
+$ dig +tcp taboola-display.com A   (baseline: blocked by the list)
+taboola-display.com.	10	IN	A	0.0.0.0
+;; Query time: 36 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:33 UTC 2026
+;; MSG SIZE  rcvd: 64
+
+$ curl -s -b cookies.txt -X POST -d {"enabled":false,"duration":0} /control/protection
+OK
+
+HTTP 200
+$ curl -s -b cookies.txt /control/status
+{"version":"v0.107.79","language":"","dns_addresses":["127.0.0.1"],"dns_port":53,"http_port":18080,"protection_disabled_duration":0,"start_time":1793667400754.5994,"protection_enabled":false,"dhcp_available":true,"running":true}
+
+$ dig +tcp taboola-display.com A   (protection off: the list no longer applies)
+taboola-display.com.	15	IN	A	198.18.131.115
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:34 UTC 2026
+;; MSG SIZE  rcvd: 64
+
+$ curl -s -b cookies.txt -X POST -d {"enabled":true} /control/protection
+OK
+
+HTTP 200
+$ dig +tcp cursosmarketing.info A   (a second list domain: blocked again)
+cursosmarketing.info.	10	IN	A	0.0.0.0
+;; Query time: 18 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:35 UTC 2026
+;; MSG SIZE  rcvd: 65
+
+
+$ curl -s -i -X POST -d {"name":"admin","password":"wrong-password"} /control/login   (bad password)
+HTTP/1.1 403 Forbidden
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Tue, 03 Nov 2026 01:00:35 GMT
+Content-Length: 29
+
+invalid username or password
+
+$ dig +tcp @127.0.0.1 example.com ANY +noall +comments   (refuse_any)
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOTIMP, id: 63364
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1452
+$ printf "http:\n  address: [unclosed\n" > bad.yaml; AdGuardHome -c bad.yaml --check-config
+2026/11/03 01:00:35 [error] Couldn't get logging settings from the configuration: go-yaml load error in parser (while parsing a flow sequence) at L2.C12-L3.C1: did not find expected ',' or ']'
+2026/11/03 01:00:35.833961 [info] starting adguard home version="AdGuard Home, version v0.107.79"
+2026/11/03 01:00:35.837374 [error] failed to parse configuration file err="parsing config file for upgrade: go-yaml load error in parser (while parsing a flow sequence) at L2.C12-L3.C1: did not find expected ',' or ']'"
+exit:1

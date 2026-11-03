@@ -1,0 +1,26 @@
+$ POST /control/rewrite/add {"domain":"files.example","answer":"192.0.2.50"}
+HTTP 200
+$ POST /control/rewrite/add {"domain":"nas.example","answer":"192.0.2.60"}
+HTTP 200
+$ GET /control/rewrite/list
+[{"domain":"files.example","answer":"192.0.2.50","enabled":true},{"domain":"nas.example","answer":"192.0.2.60","enabled":true}]
+$ dig +tcp files.example A   (answered locally, upstream never asked)
+files.example.		10	IN	A	192.0.2.50
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:06 UTC 2026
+;; MSG SIZE  rcvd: 58
+$ dig +tcp nas.example A
+nas.example.		10	IN	A	192.0.2.60
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:06 UTC 2026
+;; MSG SIZE  rcvd: 56
+$ DELETE: POST /control/rewrite/delete {"domain":"files.example","answer":"192.0.2.50"}
+HTTP 200
+$ dig +tcp files.example A   (rewrite gone: the question goes upstream again)
+files.example.		15	IN	A	198.18.131.114
+;; Query time: 28 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:06 UTC 2026
+;; MSG SIZE  rcvd: 58

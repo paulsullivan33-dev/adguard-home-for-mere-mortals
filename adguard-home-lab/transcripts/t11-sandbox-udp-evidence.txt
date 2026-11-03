@@ -1,0 +1,12 @@
+Server-log evidence for the two sandbox ceilings (from lab/server.log, same session as t03/t04):
+
+$ grep -m2 "no addresses" server.log   (the default DoH upstream cannot be reached: its name is resolved via bootstrap servers over UDP)
+2026/11/03 00:56:47.943258 [error] dnsproxy: exchange failed upstream=https://dns10.quad9.net:443/dns-query question=";adguardteam.github.io.\tIN\t AAAA" duration=27.912087ms err="exchanging: requesting https://dns10.quad9.net:443/dns-query: Get \"https://dns10.quad9.net:443/dns-query?dns=AAABAAABAAAAAAAAC2FkZ3VhcmR0ZWFtBmdpdGh1YgJpbwAAHAAB\": no addresses"
+2026/11/03 00:56:47.946190 [error] dnsproxy: exchange failed upstream=https://dns10.quad9.net:443/dns-query question=";adguardteam.github.io.\tIN\t A" duration=30.995022ms err="exchanging: requesting https://dns10.quad9.net:443/dns-query: Get \"https://dns10.quad9.net:443/dns-query?dns=AAABAAABAAAAAAAAC2FkZ3VhcmR0ZWFtBmdpdGh1YgJpbwAAAQAB\": no addresses"
+
+$ grep -m3 "sendmsg: operation not permitted" server.log   (UDP answers cannot be sent by this process in the sandbox)
+2026/11/03 00:56:51.179443 [error] dnsproxy: responding request proto=udp err="writing message: write udp 127.0.0.1:53->127.0.0.1:43021: sendmsg: operation not permitted"
+2026/11/03 00:56:56.205483 [error] dnsproxy: responding request proto=udp err="writing message: write udp 127.0.0.1:53->127.0.0.1:41375: sendmsg: operation not permitted"
+2026/11/03 00:57:01.237101 [error] dnsproxy: responding request proto=udp err="writing message: write udp 127.0.0.1:53->127.0.0.1:51756: sendmsg: operation not permitted"
+
+Reading: the DNS server binds UDP and receives questions, but every attempt to send a UDP answer fails with EPERM in this sandbox, so dig over UDP times out (t03). DNS over TCP on the same port works normally (t05 onward).

@@ -1,0 +1,24 @@
+$ dig +tcp ads.example.com A   (baseline: blocked by the custom rule)
+ads.example.com.	10	IN	A	0.0.0.0
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:24 UTC 2026
+;; MSG SIZE  rcvd: 60
+
+$ POST /control/clients/add  {"name":"lab-client","ids":["127.0.0.1"],"filtering_enabled":false,...}
+HTTP 200 
+$ dig +tcp ads.example.com A   (same question, but this client has filtering off)
+ads.example.com.	15	IN	A	198.18.131.112
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:25 UTC 2026
+;; MSG SIZE  rcvd: 60
+
+$ POST /control/clients/delete {"name":"lab-client"}
+HTTP 200 
+$ dig +tcp ads.example.com A   (client deleted: the global rule applies again)
+ads.example.com.	10	IN	A	0.0.0.0
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 01:00:26 UTC 2026
+;; MSG SIZE  rcvd: 60

@@ -1,0 +1,36 @@
+$ POST /control/filtering/set_rules []  (start from no custom rules)
+$ POST /control/filtering/refresh {whitelist:false}  (download the enabled blocklists)
+HTTP 200 {"updated":0}
+$ GET /control/filtering/status
+filter 1 AdGuard DNS filter enabled: True rules_count: 188107
+filter 2 AdAway Default Blocklist enabled: False rules_count: 0
+
+$ grep -m1 taboola lab/data/filters/1.txt   (a domain taken from the downloaded list itself)
+||taboola-display.com^
+$ dig +tcp taboola-display.com A   (blocked by the downloaded list)
+taboola-display.com.	10	IN	A	0.0.0.0
+;; Query time: 23 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:51 UTC 2026
+;; MSG SIZE  rcvd: 64
+
+$ POST /control/filtering/set_rules  ["||ads.example.com^"]
+HTTP 200
+$ dig +tcp ads.example.com A   (blocked by the custom rule: 0.0.0.0, TTL 10)
+ads.example.com.	10	IN	A	0.0.0.0
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:54 UTC 2026
+;; MSG SIZE  rcvd: 60
+$ dig +tcp www.ads.example.com A   (the || rule covers subdomains too)
+www.ads.example.com.	10	IN	A	0.0.0.0
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:54 UTC 2026
+;; MSG SIZE  rcvd: 64
+$ dig +tcp example.com A   (in no list and no rule: still answered)
+example.com.		15	IN	A	198.18.131.110
+;; Query time: 4 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (TCP)
+;; WHEN: Tue Nov 03 00:59:54 UTC 2026
+;; MSG SIZE  rcvd: 56
